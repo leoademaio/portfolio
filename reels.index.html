@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leo Dmaio · Filmmaker & Audiovisual</title>
+  <style>
+    /* ============================================================
+       VARIÁVEIS & RESET
+    ============================================================ */
+    @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap');
+
+    :root {
+      --orange:    #FF5C00;
+      --orange-dim:#C44500;
+      --white:     #F0ECE3;
+      --off-white: #B8B0A0;
+      --dark:      #0A0704;
+      --dark-mid:  #110D08;
+      --dark-card: rgba(15, 10, 5, 0.82);
+      --glow:      rgba(255, 92, 0, 0.18);
+      --transition: 0.65s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      background: var(--dark);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      overflow: hidden; /* handled by scroll container */
+    }
+
+    /* ============================================================
+       FUNDO FIXO CINEMATOGRÁFICO
+    ============================================================ */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Gradiente de base fixo */
+    .bg-gradient {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(ellipse 70% 60% at 30% 50%, rgba(180, 80, 0, 0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 80% at 80% 30%, rgba(255, 92, 0, 0.07) 0%, transparent 60%),
+        var(--dark);
+      pointer-events: none;
+    }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 52px;
+      background: rgba(10, 7, 4, 0.75);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 92, 0, 0.12);
+    }
+
+    .nav-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.12em;
+      color: var(--orange);
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--off-white);
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+
+    .nav-links a:hover { color: var(--orange); }
+
+    /* ============================================================
+       TICKER INFERIOR
+    ============================================================ */
+    .ticker-wrap {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 36px;
+      background: var(--orange);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
+    .ticker-track {
+      display: flex;
+      gap: 0;
+      white-space: nowrap;
+      animation: ticker 28s linear infinite;
+    }
+
+    .ticker-item {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--dark);
+      padding: 0 1.2rem;
+    }
+
+    .ticker-dot {
+      color: var(--dark);
+      opacity: 0.5;
+      font-size: 0.5rem;
+      padding: 0 0.2rem;
+      align-self: center;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ============================================================
+       DOTS LATERAIS
+    ============================================================ */
+    .side-dots {
+      position: fixed;
+      right: 1.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.22);
+      border: 1px solid rgba(255, 92, 0, 0.35);
+      cursor: pointer;
+      transition: all 0.35s ease;
+    }
+
+    .dot.active {
+      background: var(--orange);
+      border-color: var(--orange);
+      transform: scale(1.35);
+      box-shadow: 0 0 10px var(--orange);
+    }
+
+    .dot:hover:not(.active) {
+      background: rgba(255, 92, 0, 0.5);
+    }
+
+    /* ============================================================
+       SCROLL CONTAINER
+    ============================================================ */
+    #scroll-container {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    #scroll-container::-webkit-scrollbar { display: none; }
+
+    /* ============================================================
+       SEÇÕES DE PROJETO
+    ============================================================ */
+    .project-section {
+      width: 100%;
+      height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      opacity: 0;
+    }
+
+    /* ============================================================
+       LAYOUT PROJETO
+    ============================================================ */
+    .project-inner {
+      width: 100%;
+      max-width: 1300px;
+      padding: 0 3rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    /* ---------- COLUNA TEXTO ---------- */
+    .project-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+      max-width: 480px;
+    }
+
+    .project-number {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 5rem;
+      line-height: 1;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255, 92, 0, 0.25);
+      letter-spacing: -0.02em;
+      user-select: none;
+    }
+
+    .project-category {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--orange);
+    }
+
+    .project-category::before {
+      content: '';
+      width: 22px;
+      height: 2px;
+      background: var(--orange);
+    }
+
+    .project-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.5rem, 4.5vw, 4rem);
+      line-height: 0.92;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    .project-title .accent {
+      color: var(--orange);
+    }
+
+    .project-desc {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      font-size: 0.92rem;
+      line-height: 1.75;
+      color: var(--off-white);
+      max-width: 380px;
+    }
+
+    /* ---------- COLUNA VÍDEO ---------- */
+    .project-video-wrap {
+      position: relative;
+      width: 315px;
+      /* 9:16 ratio */
+      aspect-ratio: 9 / 16;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 92, 0, 0.18);
+      overflow: hidden;
+      background: #0d0905;
+      border-radius: 14px;
+      box-shadow:
+        0 0 0 1px rgba(255, 92, 0, 0.12),
+        0 8px 32px rgba(0, 0, 0, 0.65),
+        0 2px 8px rgba(0, 0, 0, 0.5),
+        inset 0 0 30px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Glow ao redor do container de vídeo */
+    .project-video-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border: 1.5px solid rgba(255, 92, 0, 0.25);
+      border-radius: 15px;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .project-video-wrap::after {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      background: radial-gradient(ellipse 100% 100% at 50% 50%, rgba(255, 92, 0, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .project-video-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      cursor: pointer;
+    }
+
+    /* Vimeo iframe embed */
+    .project-video-wrap iframe {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border: none;
+      pointer-events: none; /* clique gerenciado pelo overlay */
+    }
+
+    /* Overlay invisível para capturar cliques sobre o iframe */
+    .video-click-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    /* Overlay "clique p/ som" */
+    .sound-hint {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(0,0,0,0.55);
+      padding: 0.35rem 0.8rem;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--off-white);
+      z-index: 6;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.4s;
+    }
+
+    .sound-hint svg { width: 10px; height: 10px; }
+
+    .sound-hint.hidden { opacity: 0; }
+
+    /* Vídeo horizontal (16:9) — página 11 */
+    .project-video-horizontal {
+      width: min(85vw, 900px);
+      aspect-ratio: 16 / 9;
+    }
+
+    /* Placeholder enquanto não há vídeo real */
+    .video-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      background: linear-gradient(160deg, #1a0f07 0%, #0d0703 100%);
+      z-index: 2;
+    }
+
+    .video-placeholder .ph-icon {
+      width: 48px;
+      height: 48px;
+      border: 2px solid rgba(255, 92, 0, 0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--orange);
+    }
+
+    .video-placeholder span {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255, 92, 0, 0.5);
+    }
+
+    /* ============================================================
+       LINHA DECORATIVA LATERAL
+    ============================================================ */
+    .section-line {
+      position: absolute;
+      left: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.35;
+    }
+
+    .section-line-bar {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, var(--orange), transparent);
+    }
+
+    .section-line-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--orange);
+      writing-mode: vertical-rl;
+    }
+
+    /* ============================================================
+       ANIMAÇÕES DE ENTRADA/SAÍDA POR SEÇÃO
+    ============================================================ */
+    .project-section {
+      transition: opacity 0.55s ease;
+    }
+
+    .project-section.is-active {
+      opacity: 1;
+    }
+
+    .project-text .project-number,
+    .project-text .project-category,
+    .project-text .project-title,
+    .project-text .project-desc {
+      opacity: 0;
+      transform: translateX(-28px);
+      transition:
+        opacity var(--transition),
+        transform var(--transition);
+    }
+
+    .project-section.is-active .project-text .project-number   { opacity: 1; transform: none; transition-delay: 0.05s; }
+    .project-section.is-active .project-text .project-category { opacity: 1; transform: none; transition-delay: 0.12s; }
+    .project-section.is-active .project-text .project-title    { opacity: 1; transform: none; transition-delay: 0.2s;  }
+    .project-section.is-active .project-text .project-desc     { opacity: 1; transform: none; transition-delay: 0.3s;  }
+
+    .project-video-wrap {
+      opacity: 0;
+      transform: translateY(30px) scale(0.96);
+      transition:
+        opacity var(--transition),
+        transform var(--transition);
+      transition-delay: 0.15s;
+    }
+
+    .project-section.is-active .project-video-wrap {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ============================================================
+       RESPONSIVIDADE MOBILE
+    ============================================================ */
+    @media (max-width: 768px) {
+      .project-inner {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        gap: 1.5rem;
+        padding: 5rem 1.2rem 4rem;
+        align-items: start;
+        overflow-y: auto;
+      }
+
+      .project-text { max-width: 100%; order: 2; }
+
+      .project-video-wrap {
+        width: 100%;
+        max-width: 260px;
+        margin: 0 auto;
+        order: 1;
+      }
+
+      .section-line { display: none; }
+
+      .project-number { font-size: 3rem; }
+
+      nav { padding: 0 1rem; }
+      .side-dots { right: 0.7rem; }
+
+      .project-section {
+        height: auto;
+        min-height: 100vh;
+      }
+    }
+    /* ============================================================
+       PÁGINA FINAL — CTA
+    ============================================================ */
+    .cta-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cta-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 2rem;
+      padding: 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .cta-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--orange);
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .cta-label::before,
+    .cta-label::after {
+      content: '';
+      width: 32px;
+      height: 1.5px;
+      background: var(--orange);
+      opacity: 0.6;
+    }
+
+    .cta-headline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(3.2rem, 8vw, 7rem);
+      line-height: 0.9;
+      text-transform: uppercase;
+      color: var(--white);
+      letter-spacing: -0.01em;
+    }
+
+    .cta-accent {
+      color: var(--orange);
+      display: block;
+    }
+
+    .cta-sub {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+      color: var(--off-white);
+      max-width: 420px;
+      line-height: 1.7;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 0.5rem;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.85rem 2rem;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .cta-btn svg {
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+    }
+
+    .cta-btn--primary {
+      background: var(--orange);
+      color: var(--dark);
+      border: 2px solid var(--orange);
+      box-shadow: 0 0 28px rgba(255, 92, 0, 0.35);
+    }
+
+    .cta-btn--primary:hover {
+      background: #ff7a28;
+      border-color: #ff7a28;
+      box-shadow: 0 0 44px rgba(255, 92, 0, 0.55);
+      transform: translateY(-2px);
+    }
+
+    .cta-btn--secondary {
+      background: transparent;
+      color: var(--white);
+      border: 2px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .cta-btn--secondary:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+      transform: translateY(-2px);
+    }
+
+    .cta-signature {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 5.5rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255, 92, 0, 0.14);
+      user-select: none;
+      margin-top: 1rem;
+      line-height: 1;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       FUNDO FIXO (Canvas + gradiente)
+  ============================================================ -->
+  <canvas id="bg-canvas"></canvas>
+  <div class="bg-gradient"></div>
+
+  <!-- ============================================================
+       NAVBAR
+  ============================================================ -->
+  <nav>
+    <div class="nav-logo">Leo Dmaio</div>
+    <ul class="nav-links">
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+  </nav>
+
+  <!-- ============================================================
+       DOTS LATERAIS DE NAVEGAÇÃO
+  ============================================================ -->
+  <div class="side-dots" id="side-dots">
+    <!-- Gerado pelo JS -->
+  </div>
+
+  <!-- ============================================================
+       SCROLL CONTAINER PRINCIPAL
+  ============================================================ -->
+  <div id="scroll-container">
+
+    <!-- ================================================
+         SLIDES 1–10 — PROJETOS
+         Para trocar os vídeos: substitua src="videos/projeto-N.mp4"
+         Para trocar os textos: edite título, descrição, categoria etc.
+    ================================================ -->
+
+    <!-- PROJETO 1 -->
+    <section class="project-section" data-index="0">
+      <div class="section-line">
+        <div class="section-line-bar"></div>
+        <span class="section-line-num">01</span>
+        <div class="section-line-bar"></div>
+      </div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">01</span>
+          <span class="project-category">Videomaker</span>
+          <!-- ▼ TROQUE O TÍTULO DO PROJETO ▼ -->
+          <h2 class="project-title">Gravação e edição<br><span class="accent">VÍDEOS CURTOS</span></h2>
+          <!-- ▼ TROQUE A DESCRIÇÃO ▼ -->
+          <p class="project-desc"></p>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181286759">
+          <!-- ▼ TROQUE data-vimeo-id pelo ID do vídeo do Vimeo ▼ -->
+          <iframe
+            src="about:blank"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+            title="Projeto 01"
+          ></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder">
+            <div class="ph-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+            <span>projeto-01</span>
+          </div>
+          <div class="sound-hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            Toque para som
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETO 2 -->
+    <section class="project-section" data-index="1">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">02</span><div class="section-line-bar"></div></div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">02</span>
+          <span class="project-category">Videomaker</span>
+	  <h2 class="project-title">NARRATIVAS<br><span class="accent">ESTRATÉGICAS</span></h2>
+          <p class="project-desc">Produção de vídeos curtos de vendas com foco em conversão, utilizando textos estratégicos baseados em palavras-chave e técnicas de SEO.</p>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181287343">
+          <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 02"></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-02</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETO 3 -->
+    <section class="project-section" data-index="2">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">03</span><div class="section-line-bar"></div></div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">03</span>
+          <span class="project-category">Videomaker</span>
+          <h2 class="project-title">O RITMO DA<br><span class="accent">RETENÇÃO</span></h2>
+          <p class="project-desc">Cada vídeo é desenvolvido para capturar a atenção do público, transmitindo a mensagem de forma clara, persuasiva e alinhada aos objetivos da marca.</p>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181425661">
+          <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 03"></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-03</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETO 4 -->
+    <section class="project-section" data-index="3">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">04</span><div class="section-line-bar"></div></div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">04</span>
+          <span class="project-category">Videomaker</span>
+          <h2 class="project-title">FREQUÊNCIA<br><span class="accent">Visual</span></h2>
+          <p class="project-desc">Através de uma direção precisa e montagem rítmica, elevamos o padrão visual da sua marca, garantindo que cada segundo de conteúdo pulse na frequência do seu público.</p>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181287531">
+          <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 04"></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-04</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETO 5 -->
+    <section class="project-section" data-index="4">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">05</span><div class="section-line-bar"></div></div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">05</span>
+          <span class="project-category">Videomaker</span>
+          <p class="project-desc">Através de uma curadoria sonora imersiva e transições que ditam o batimento cardíaco da edição, transformamos meros segundos em memórias visuais que evocam emoção genuína e desejo imediato. É o equilíbrio entre a estética sofisticada de um editorial e a agilidade das redes sociais, onde cada frame é lapidado para criar uma conexão visceral que humaniza a marca e eterniza o momento no imaginário de quem consome.</p>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181425780">
+          <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 05"></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-05</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETO 6 -->
+    <section class="project-section" data-index="5">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">06</span><div class="section-line-bar"></div></div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">06</span>
+          <span class="project-category">Videomaker</span>
+          <p class="project-desc">Se o seu objetivo é giro rápido e estoque zero, entregamos a agressividade que o mercado exige com a qualidade que sua marca merece. Unindo gatilhos mentais de urgência a uma estética de varejo moderna, criando vídeos que não apenas apresentam o produto, mas convocam para o fechamento.  Focado no 'sell-out': a ideia é transformar ofertas em eventos visuais impossíveis de ignorar, garantindo que sua mensagem chegue com clareza, força e o impacto necessário para converter o clique em faturamento agora.</p>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181287656">
+          <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 06"></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-06</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETO 7 -->
+    <section class="project-section" data-index="6">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">07</span><div class="section-line-bar"></div></div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">07</span>
+          <span class="project-category">Videomaker</span>
+          <h2 class="project-title">IMPACTO<br><span class="accent">IMEDIATO</span></h2>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181425817">
+          <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 07"></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-07</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETO 8 -->
+    <section class="project-section" data-index="7">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">08</span><div class="section-line-bar"></div></div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">08</span>
+          <span class="project-category">Videomaker</span>
+          <h2 class="project-title">Construção de<br><span class="accent">Autoridade</span></h2>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181287792">
+          <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 08"></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-08</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETO 9 -->
+    <section class="project-section" data-index="8">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">09</span><div class="section-line-bar"></div></div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">09</span>
+          <span class="project-category">Videomaker</span>
+          <h2 class="project-title">AURA DE<br><span class="accent">DISTINÇÃO</span></h2>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181287837">
+          <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 09"></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-09</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETO 10 -->
+    <section class="project-section" data-index="9">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">10</span><div class="section-line-bar"></div></div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">10</span>
+          <span class="project-category">Videomaker</span>
+          <h2 class="project-title">PRESENÇA<br><span class="accent">CONCRETA</span></h2>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181287898">
+          <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 10"></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-10</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETO 11 — vídeo horizontal, centralizado, sem textos -->
+    <section class="project-section" data-index="10">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">11</span><div class="section-line-bar"></div></div>
+      <div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">
+        <div class="project-video-wrap project-video-horizontal" data-vimeo-id="1181288090">
+          <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 11"></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-11</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETO 12 -->
+    <section class="project-section" data-index="11">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">12</span><div class="section-line-bar"></div></div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">12</span>
+          <span class="project-category">Videomaker</span>
+          <h2 class="project-title">CORTE<br><span class="accent">VIRAL</span></h2>
+          <p class="project-desc">Desenvolvimento de cortes para podcasts, destacando os momentos mais impactantes e garantindo uma edição dinâmica, levando em consideração a identidade visual e o design do projeto, para criar conteúdos que capturam a atenção do público e geram engajamento nas redes.</p>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181426818">
+          <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 12"></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-12</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETO 13 -->
+    <section class="project-section" data-index="12">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">13</span><div class="section-line-bar"></div></div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">13</span>
+          <span class="project-category">Direção · Conteúdo</span>
+          <h2 class="project-title">Presença<br><span class="accent">Digital</span></h2>
+          <p class="project-desc">Seja para Reels, TikTok ou YouTube Shorts, conteúdos envolventes e otimizados para as plataformas, transformando conversas em vídeos atrativos e compartilháveis.</p>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181426840">
+          <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 13"></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-13</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETO 14 -->
+    <section class="project-section" data-index="13">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">14</span><div class="section-line-bar"></div></div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">14</span>
+          <span class="project-category">Videomaker</span>
+          <h2 class="project-title">Alcance<br><span class="accent">Infinito</span></h2>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181426861">
+          <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 14"></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-14</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PÁGINA FINAL — CTA -->
+    <section class="project-section cta-section" data-index="14">
+      <div class="cta-inner">
+        <div class="cta-label">Vamos criar juntos</div>
+        <h2 class="cta-headline">
+          Sua marca merece<br>
+          <span class="cta-accent">ser lembrada.</span>
+        </h2>
+        <div class="cta-buttons">
+          <a class="cta-btn cta-btn--primary" href="https://wa.me/5511999400602?text=Ol%C3%A1%20Leo%2C%20vi%20seu%20portf%C3%B3lio%20e%20quero%20conversar!" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.553 4.103 1.519 5.829L.057 23.5l5.826-1.527A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.006-1.371l-.36-.213-3.714.974.99-3.617-.234-.372A9.818 9.818 0 0 1 2.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/></svg>
+            Falar no WhatsApp
+          </a>
+          <a class="cta-btn cta-btn--secondary" href="javascript:void(0)" onclick="scrollToSection(0)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            Ver os projetos
+          </a>
+        </div>
+        <div class="cta-signature">LEO DMAIO</div>
+      </div>
+    </section>
+
+  </div><!-- /scroll-container -->
+
+  <!-- ============================================================
+       TICKER INFERIOR
+  ============================================================ -->
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="ticker-track">
+      <!-- conteúdo duplicado para loop contínuo -->
+    </div>
+  </div>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+  /* ============================================================
+     CANVAS — PARTÍCULAS & GLOW
+  ============================================================ */
+  (function() {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx    = canvas.getContext('2d');
+    let W, H, particles = [];
+    const N_PARTICLES = 55;
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    function randomParticle() {
+      return {
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.2 + 0.3,
+        vx: (Math.random() - 0.5) * 0.18,
+        vy: (Math.random() - 0.5) * 0.12,
+        alpha: Math.random() * 0.35 + 0.05,
+      };
+    }
+
+    function init() {
+      resize();
+      particles = Array.from({ length: N_PARTICLES }, randomParticle);
+      window.addEventListener('resize', resize);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      // Glow central sutil
+      const grd = ctx.createRadialGradient(W * 0.28, H * 0.52, 0, W * 0.28, H * 0.52, W * 0.42);
+      grd.addColorStop(0, 'rgba(200,80,0,0.10)');
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, W, H);
+
+      // Partículas
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 140, 60, ${p.alpha})`;
+        ctx.fill();
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    init();
+    draw();
+  })();
+
+  /* ============================================================
+     TICKER — duplica itens para loop infinito
+  ============================================================ */
+  (function() {
+    const items = ['Conteúdo','Filmmaker','Videomaker','Editor','Direção','Fotografia','Produção'];
+    const track = document.getElementById('ticker-track');
+    let html = '';
+    // duplica 4x para garantir loop
+    for (let d = 0; d < 4; d++) {
+      items.forEach(item => {
+        html += `<span class="ticker-item">${item}</span><span class="ticker-dot">◆</span>`;
+      });
+    }
+    track.innerHTML = html;
+  })();
+
+  /* ============================================================
+     VIMEO EMBED — Player API via postMessage
+     
+     Para cada projeto, defina data-vimeo-id="ID_DO_VIDEO" no .project-video-wrap
+     O ID é o número na URL do Vimeo: vimeo.com/123456789
+  ============================================================ */
+
+  const wrapState = new Map();
+  let activeAudioWrap = null;
+
+  function buildVimeoSrc(videoId) {
+    // autoplay=1 muted=1 loop=1 background=0 para manter controle via postMessage
+    return `https://player.vimeo.com/video/${videoId}?autoplay=1&loop=1&muted=1&controls=0&background=0&playsinline=1&transparent=0`;
+  }
+
+  function sendVimeoCommand(iframe, method, value) {
+    const msg = { method };
+    if (value !== undefined) msg.value = value;
+    try { iframe.contentWindow.postMessage(JSON.stringify(msg), '*'); } catch(e) {}
+  }
+
+  function loadIframe(wrap) {
+    const videoId = wrap.dataset.vimeoId;
+    if (!videoId || videoId.startsWith('SEU_VIDEO_ID')) return false;
+    const iframe = wrap.querySelector('iframe');
+    if (!iframe) return false;
+    // Já carregado
+    if (iframe.src && iframe.src !== 'about:blank' && iframe.src !== window.location.href) return true;
+    iframe.src = buildVimeoSrc(videoId);
+    wrapState.set(wrap, { iframe, muted: true });
+    return true;
+  }
+
+  function playWrap(wrap) {
+    const s = wrapState.get(wrap);
+    if (s) sendVimeoCommand(s.iframe, 'play');
+  }
+
+  function pauseWrap(wrap) {
+    const s = wrapState.get(wrap);
+    if (s) sendVimeoCommand(s.iframe, 'pause');
+  }
+
+  function muteWrap(wrap) {
+    const s = wrapState.get(wrap);
+    if (!s) return;
+    sendVimeoCommand(s.iframe, 'setVolume', 0);
+    s.muted = true;
+    const hint = wrap.querySelector('.sound-hint');
+    if (hint) hint.classList.remove('hidden');
+  }
+
+  function unmuteWrap(wrap) {
+    const s = wrapState.get(wrap);
+    if (!s) return;
+    sendVimeoCommand(s.iframe, 'setVolume', 1);
+    s.muted = false;
+    const hint = wrap.querySelector('.sound-hint');
+    if (hint) hint.classList.add('hidden');
+  }
+
+  /* ============================================================
+     DOTS LATERAIS
+  ============================================================ */
+  const TOTAL_SECTIONS = 15;
+  const dotsContainer  = document.getElementById('side-dots');
+
+  function buildDots() {
+    for (let i = 0; i < TOTAL_SECTIONS; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.dataset.index = i;
+      dot.addEventListener('click', () => scrollToSection(i));
+      dotsContainer.appendChild(dot);
+    }
+  }
+
+  function updateDots(index) {
+    document.querySelectorAll('.dot').forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+    });
+  }
+
+  /* ============================================================
+     SCROLL SNAP + INTERSECTION OBSERVER
+  ============================================================ */
+  const scrollContainer = document.getElementById('scroll-container');
+  const sections        = document.querySelectorAll('.project-section');
+
+  function scrollToSection(index) {
+    const target = sections[index];
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const section = entry.target;
+      const idx     = parseInt(section.dataset.index, 10);
+      const wrap    = section.querySelector('.project-video-wrap[data-vimeo-id]');
+
+      if (entry.isIntersecting) {
+        section.classList.add('is-active');
+        updateDots(idx);
+
+        if (wrap) {
+          const loaded = loadIframe(wrap);
+          if (loaded) {
+            const ph = wrap.querySelector('.video-placeholder');
+            if (ph) ph.style.display = 'none';
+            setTimeout(() => playWrap(wrap), 600);
+          }
+          // Preload próximo
+          const nextSection = document.querySelector(`.project-section[data-index="${idx + 1}"]`);
+          if (nextSection) {
+            const nextWrap = nextSection.querySelector('.project-video-wrap[data-vimeo-id]');
+            if (nextWrap) loadIframe(nextWrap);
+          }
+        }
+
+      } else {
+        section.classList.remove('is-active');
+        if (wrap) {
+          pauseWrap(wrap);
+          if (activeAudioWrap === wrap) {
+            muteWrap(wrap);
+            activeAudioWrap = null;
+          }
+          const hint = wrap.querySelector('.sound-hint');
+          if (hint) hint.classList.remove('hidden');
+        }
+      }
+    });
+  }, {
+    root: scrollContainer,
+    threshold: 0.5,
+  });
+
+  sections.forEach(s => observer.observe(s));
+
+  /* ============================================================
+     CLIQUE NO OVERLAY — ATIVAR/DESATIVAR SOM
+  ============================================================ */
+  document.querySelectorAll('.project-video-wrap').forEach(wrap => {
+    const overlay = wrap.querySelector('.video-click-overlay');
+    if (!overlay) return;
+
+    overlay.addEventListener('click', () => {
+      if (!wrapState.has(wrap)) return;
+      const state = wrapState.get(wrap);
+
+      // Desliga som do anterior
+      if (activeAudioWrap && activeAudioWrap !== wrap) {
+        muteWrap(activeAudioWrap);
+        activeAudioWrap = null;
+      }
+
+      // Toggle
+      if (state.muted) {
+        unmuteWrap(wrap);
+        activeAudioWrap = wrap;
+      } else {
+        muteWrap(wrap);
+        activeAudioWrap = null;
+      }
+    });
+  });
+
+  /* ============================================================
+     INIT
+  ============================================================ */
+  buildDots();
+  sections[0].classList.add('is-active');
+  const firstWrap = sections[0].querySelector('.project-video-wrap[data-vimeo-id]');
+  if (firstWrap) {
+    loadIframe(firstWrap);
+    const ph = firstWrap.querySelector('.video-placeholder');
+    if (ph) ph.style.display = 'none';
+    setTimeout(() => playWrap(firstWrap), 800);
+  }
+  </script>
+
+</body>
+</html>

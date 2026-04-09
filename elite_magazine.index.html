@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leo Dmaio · Elite Magazine</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Poppins:wght@200;300;400;500&display=swap');
+
+    :root {
+      --orange:    #FF5C00;
+      --orange-dim:#C44500;
+      --white:     #F0ECE3;
+      --off-white: #B8B0A0;
+      --dark:      #000000;
+      --transition: 0.65s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      background: #000;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+    }
+
+    /* FUNDO */
+    #bg-canvas {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    }
+    .bg-solid {
+      position: fixed; inset: 0; z-index: 1;
+      background: #000000; pointer-events: none;
+    }
+    /* Glow ambiental fixo no fundo */
+    .bg-glow {
+      position: fixed; inset: 0; z-index: 2; pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 40% at 15% 80%, rgba(255,92,0,0.028) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 35% at 85% 20%, rgba(255,92,0,0.022) 0%, transparent 70%);
+    }
+
+    /* ============================================================
+       NAVBAR — padrão original (laranja)
+    ============================================================ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 52px;
+      background: rgba(10, 7, 4, 0.75);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 92, 0, 0.12);
+    }
+    .nav-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; font-size: 1.1rem;
+      letter-spacing: 0.12em; color: var(--orange);
+      text-transform: uppercase; text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600; font-size: 0.78rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--off-white); text-decoration: none;
+      transition: color 0.25s;
+    }
+    .nav-links a:hover { color: var(--orange); }
+
+    /* TICKER — padrão original (laranja) */
+    .ticker-wrap {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 100; height: 36px;
+      background: var(--orange);
+      overflow: hidden; display: flex; align-items: center;
+    }
+    .ticker-track {
+      display: flex; white-space: nowrap;
+      animation: ticker 28s linear infinite;
+    }
+    .ticker-item {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 0.72rem;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--dark); padding: 0 1.2rem;
+    }
+    .ticker-dot {
+      color: var(--dark); opacity: 0.5;
+      font-size: 0.5rem; padding: 0 0.2rem; align-self: center;
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* DOTS LATERAIS — brancos */
+    .side-dots {
+      position: fixed; right: 1.8rem; top: 50%;
+      transform: translateY(-50%); z-index: 90;
+      display: flex; flex-direction: column; gap: 0.7rem;
+    }
+    .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.28);
+      cursor: pointer; transition: all 0.35s ease;
+    }
+    .dot.active {
+      background: #fff; border-color: #fff;
+      transform: scale(1.35); box-shadow: 0 0 8px rgba(255,255,255,0.45);
+    }
+    .dot:hover:not(.active) { background: rgba(255,255,255,0.42); }
+
+    /* SCROLL CONTAINER */
+    #scroll-container {
+      position: fixed; inset: 0; z-index: 10;
+      overflow-y: scroll; scroll-snap-type: y mandatory;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    #scroll-container::-webkit-scrollbar { display: none; }
+
+    /* SEÇÕES */
+    .project-section {
+      width: 100%; height: 100vh;
+      scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; opacity: 0; transition: opacity 0.55s ease;
+    }
+    .project-section.is-active { opacity: 1; }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    .hero-inner {
+      width: 100%; max-width: 1240px;
+      padding: 0 4rem;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6rem; align-items: center;
+    }
+
+    /* Coluna esquerda — slot 1:1 para PNG */
+    .hero-img-col {
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: translateX(-28px);
+      transition: opacity var(--transition), transform var(--transition);
+      transition-delay: 0.05s;
+    }
+    .project-section.is-active .hero-img-col { opacity: 1; transform: none; }
+
+    .hero-img-placeholder {
+      width: 100%; max-width: 480px;
+      aspect-ratio: 1 / 1;
+      /* slot vazio — sem borda, sem cor, apenas o espaço */
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .hero-img-placeholder img {
+      width: 100%; height: 100%; object-fit: contain; display: block;
+    }
+
+    /* Coluna direita — texto */
+    .hero-text-col {
+      display: flex; flex-direction: column; gap: 2rem;
+    }
+
+    .hero-body-text {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.95rem, 1.18vw, 1.1rem);
+      line-height: 1.9; color: #ffffff;
+      text-align: justify;
+      opacity: 0; transform: translateX(28px);
+      transition: opacity var(--transition), transform var(--transition);
+      transition-delay: 0.12s;
+    }
+    .project-section.is-active .hero-body-text { opacity: 1; transform: none; }
+
+    .hero-scroll-btn {
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      font-family: 'Poppins', sans-serif; font-weight: 400;
+      font-size: 0.84rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #000; background: #fff; border: none;
+      padding: 0.85rem 2rem; border-radius: 3px; cursor: pointer;
+      width: fit-content;
+      opacity: 0; transform: translateX(28px);
+      transition: opacity var(--transition), transform var(--transition), background 0.3s;
+      transition-delay: 0.28s;
+    }
+    .project-section.is-active .hero-scroll-btn { opacity: 1; transform: none; }
+    .hero-scroll-btn:hover { background: #ddd; }
+
+    /* ============================================================
+       LAYOUT PROJETO — texto + vídeo
+    ============================================================ */
+    .project-inner {
+      width: 100%; max-width: 1300px; padding: 0 3rem;
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 4rem; align-items: center;
+    }
+    .project-text {
+      display: flex; flex-direction: column; gap: 1.4rem; max-width: 480px;
+    }
+    .project-number {
+      font-family: 'Poppins', sans-serif; font-weight: 200;
+      font-size: 5.5rem; line-height: 1;
+      color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.16);
+      letter-spacing: -0.02em; user-select: none;
+    }
+    .project-category {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-family: 'Poppins', sans-serif; font-weight: 300;
+      font-size: 0.74rem; letter-spacing: 0.26em; text-transform: uppercase;
+      color: rgba(255,255,255,0.48);
+    }
+    .project-category::before {
+      content: ''; width: 22px; height: 1px; background: rgba(255,255,255,0.35);
+    }
+    .project-title {
+      font-family: 'Poppins', sans-serif; font-weight: 300;
+      font-size: clamp(2.2rem, 4vw, 3.6rem);
+      line-height: 1.05; text-transform: uppercase;
+      color: #ffffff; letter-spacing: 0.02em;
+    }
+    .project-desc {
+      font-family: 'Poppins', sans-serif; font-weight: 300;
+      font-size: 1rem; line-height: 1.82;
+      color: rgba(255,255,255,0.68); max-width: 400px;
+    }
+
+    /* Animações texto */
+    .project-text .project-number,
+    .project-text .project-category,
+    .project-text .project-title,
+    .project-text .project-desc {
+      opacity: 0; transform: translateX(-28px);
+      transition: opacity var(--transition), transform var(--transition);
+    }
+    .project-section.is-active .project-text .project-number   { opacity: 1; transform: none; transition-delay: 0.05s; }
+    .project-section.is-active .project-text .project-category { opacity: 1; transform: none; transition-delay: 0.12s; }
+    .project-section.is-active .project-text .project-title    { opacity: 1; transform: none; transition-delay: 0.2s;  }
+    .project-section.is-active .project-text .project-desc     { opacity: 1; transform: none; transition-delay: 0.3s;  }
+
+    /* ============================================================
+       VÍDEO VERTICAL
+    ============================================================ */
+    .project-video-wrap {
+      position: relative; width: 315px;
+      aspect-ratio: 9 / 16; flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.1);
+      overflow: visible; background: #0a0a0a; border-radius: 14px;
+      box-shadow:
+        0 8px 40px rgba(0,0,0,0.85),
+        0 2px 8px rgba(0,0,0,0.6),
+        0 0 28px rgba(255,92,0,0.08),
+        0 0 60px rgba(255,92,0,0.04);
+      opacity: 0; transform: translateY(30px) scale(0.96);
+      transition: opacity var(--transition), transform var(--transition), box-shadow 1.2s ease;
+      transition-delay: 0.15s;
+    }
+    .project-section.is-active .project-video-wrap {
+      opacity: 1; transform: none;
+      box-shadow:
+        0 8px 40px rgba(0,0,0,0.85),
+        0 2px 8px rgba(0,0,0,0.6),
+        0 0 35px rgba(255,92,0,0.11),
+        0 0 80px rgba(255,92,0,0.055),
+        0 0 1px rgba(255,255,255,0.06);
+      animation: video-glow-pulse 4s ease-in-out infinite;
+    }
+    @keyframes video-glow-pulse {
+      0%, 100% {
+        box-shadow:
+          0 8px 40px rgba(0,0,0,0.85),
+          0 2px 8px rgba(0,0,0,0.6),
+          0 0 30px rgba(255,92,0,0.09),
+          0 0 70px rgba(255,92,0,0.045);
+      }
+      50% {
+        box-shadow:
+          0 8px 40px rgba(0,0,0,0.85),
+          0 2px 8px rgba(0,0,0,0.6),
+          0 0 42px rgba(255,92,0,0.14),
+          0 0 95px rgba(255,92,0,0.065),
+          0 0 2px rgba(255,200,150,0.07);
+      }
+    }
+    /* clip interno para o vídeo não vazar */
+    .project-video-wrap > video,
+    .project-video-wrap > .video-placeholder,
+    .project-video-wrap > .sound-hint {
+      border-radius: 14px;
+    }
+    .project-video-wrap video { overflow: hidden; }
+    .project-video-wrap::before {
+      content: ''; position: absolute; inset: -2px;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 15px; pointer-events: none; z-index: 5;
+    }
+    /* clip interno para vídeo e placeholder */
+    .project-video-wrap-inner {
+      position: absolute; inset: 0; border-radius: 14px; overflow: hidden;
+    }
+    .project-video-wrap video {
+      width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer;
+      border-radius: 14px;
+    }
+
+    .video-only-center {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%;
+    }
+
+    .sound-hint {
+      position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 0.4rem;
+      background: rgba(0,0,0,0.58); padding: 0.35rem 0.8rem;
+      font-family: 'Poppins', sans-serif; font-size: 0.6rem; font-weight: 300;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.65); z-index: 6;
+      pointer-events: none; opacity: 1; transition: opacity 0.4s;
+      border-radius: 20px;
+    }
+    .sound-hint svg { width: 10px; height: 10px; }
+    .sound-hint.hidden { opacity: 0; }
+
+    .video-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1rem;
+      background: #0a0a0a; z-index: 2;
+    }
+    .video-placeholder .ph-icon {
+      width: 48px; height: 48px;
+      border: 1px solid rgba(255,255,255,0.18); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.45);
+    }
+    .video-placeholder span {
+      font-family: 'Poppins', sans-serif; font-size: 0.62rem; font-weight: 300;
+      letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.28);
+    }
+
+    /* LINHA DECORATIVA */
+    .section-line {
+      position: absolute; left: 2rem; top: 50%; transform: translateY(-50%);
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0.5rem; opacity: 0.18;
+    }
+    .section-line-bar {
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, transparent, #fff, transparent);
+    }
+    .section-line-num {
+      font-family: 'Poppins', sans-serif; font-size: 0.58rem; font-weight: 300;
+      letter-spacing: 0.15em; color: #fff; writing-mode: vertical-rl;
+    }
+
+    /* ============================================================
+       CTA FINAL — branco/preto
+    ============================================================ */
+    .cta-section { display: flex; align-items: center; justify-content: center; }
+    .cta-inner {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 2rem; padding: 2rem;
+      position: relative; z-index: 2;
+    }
+    .cta-label {
+      font-family: 'Poppins', sans-serif; font-weight: 300;
+      font-size: 0.78rem; letter-spacing: 0.32em; text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .cta-label::before, .cta-label::after {
+      content: ''; width: 32px; height: 1px; background: rgba(255,255,255,0.25);
+    }
+    .cta-headline {
+      font-family: 'Poppins', sans-serif; font-weight: 200;
+      font-size: clamp(3rem, 7.5vw, 6.5rem);
+      line-height: 0.95; text-transform: uppercase;
+      color: #ffffff; letter-spacing: 0.02em;
+    }
+    .cta-accent { color: #ffffff; display: block; font-weight: 400; }
+    .cta-sub {
+      font-family: 'Poppins', sans-serif; font-weight: 300;
+      font-size: clamp(0.92rem, 1.5vw, 1.06rem);
+      color: rgba(255,255,255,0.5); max-width: 420px; line-height: 1.75;
+    }
+    .cta-buttons {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      justify-content: center; margin-top: 0.5rem;
+    }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      font-family: 'Poppins', sans-serif; font-weight: 400;
+      font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
+      text-decoration: none; padding: 0.85rem 2rem;
+      border-radius: 3px; transition: all 0.3s ease; cursor: pointer;
+    }
+    .cta-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+    .cta-btn--primary {
+      background: #ffffff; color: #000000; border: 2px solid #ffffff;
+    }
+    .cta-btn--primary:hover { background: #e0e0e0; border-color: #e0e0e0; transform: translateY(-2px); }
+    .cta-btn--secondary {
+      background: transparent; color: #ffffff; border: 2px solid rgba(255,255,255,0.22);
+    }
+    .cta-btn--secondary:hover { border-color: rgba(255,255,255,0.65); transform: translateY(-2px); }
+    .cta-signature {
+      font-family: 'Poppins', sans-serif; font-weight: 200;
+      font-size: 5rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.07);
+      user-select: none; margin-top: 1rem; line-height: 1;
+    }
+
+    /* ============================================================
+       RESPONSIVIDADE
+    ============================================================ */
+    @media (max-width: 768px) {
+      .hero-inner {
+        grid-template-columns: 1fr; gap: 2rem;
+        padding: 5rem 1.5rem 4rem; align-items: start; overflow-y: auto;
+      }
+      .hero-img-placeholder { max-width: 280px; }
+      .project-inner {
+        grid-template-columns: 1fr; gap: 1.5rem;
+        padding: 5rem 1.2rem 4rem; align-items: start; overflow-y: auto;
+      }
+      .project-text { max-width: 100%; order: 2; }
+      .project-video-wrap { width: 100%; max-width: 250px; margin: 0 auto; order: 1; }
+      .section-line { display: none; }
+      .project-number { font-size: 3.5rem; }
+      nav { padding: 0 1rem; }
+      .side-dots { right: 0.7rem; }
+      .project-section { height: auto; min-height: 100vh; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+  <div class="bg-solid"></div>
+  <div class="bg-glow"></div>
+
+  <!-- NAVBAR — padrão original -->
+  <nav>
+    <a class="nav-logo" href="javascript:void(0)" onclick="scrollToSection(0)">Leo Dmaio</a>
+    <ul class="nav-links">
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+  </nav>
+
+  <div class="side-dots" id="side-dots"></div>
+
+  <div id="scroll-container">
+
+    <!-- SEÇÃO 0 — HERO -->
+    <section class="project-section" data-index="0">
+      <div class="section-line">
+        <div class="section-line-bar"></div>
+        <span class="section-line-num">00</span>
+        <div class="section-line-bar"></div>
+      </div>
+      <div class="hero-inner">
+
+        <!-- SLOT PNG 1000×1000 -->
+        <div class="hero-img-col">
+          <div class="hero-img-placeholder">
+            <img src="elite-logo.png" alt="Elite Magazine" />
+</div>
+        </div>
+
+        <!-- TEXTO -->
+        <div class="hero-text-col">
+          <p class="hero-body-text">
+            A Elite Magazine é uma revista voltada ao universo do luxo, lifestyle, viagens e experiências exclusivas, com mais de três décadas de atuação no mercado editorial. Reconhecida por sua curadoria sofisticada, ela acompanha eventos de alto padrão, destinos internacionais, personalidades, moda, cultura e negócios, conectando marcas e leitores a um conteúdo premium e aspiracional. Com uma linguagem editorial elegante e contemporânea, a revista se posiciona como referência em conteúdo de luxo no Brasil, unindo tradição, relevância e olhar global sobre tendências e experiências únicas.
+          </p>
+          <button class="hero-scroll-btn" onclick="scrollToSection(1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="6 9 12 15 18 9"/></svg>
+            Ver o projeto
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SEÇÃO 1 — texto + vídeo -->
+    <section class="project-section" data-index="1">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">01</span><div class="section-line-bar"></div></div>
+      <div class="project-inner">
+        <div class="project-text">
+          <span class="project-number">01</span>
+          <span class="project-category">Elite Magazine</span>
+          <p class="project-desc">Na Elite Magazine, atuo como repórter e editor, sendo responsável pela condução das entrevistas e pela edição de conteúdos curtos e dinâmicos, desenvolvidos especialmente para o formato de Reels. Meu foco está em transformar conversas em narrativas objetivas, envolventes e alinhadas ao posicionamento editorial da revista, garantindo ritmo, clareza e impacto visual. O objetivo é comunicar temas ligados ao lifestyle de forma acessível, atual e altamente atrativa para as redes sociais.</p>
+        </div>
+        <div class="project-video-wrap" data-vimeo-id="1181286759">
+          <!-- ▼ TROQUE data-vimeo-id pelo ID do vídeo do Vimeo ▼ -->
+          <iframe
+            src="about:blank"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+            title="Projeto 01"
+          ></iframe>
+          <div class="video-click-overlay"></div>
+          <div class="video-placeholder">
+            <div class="ph-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+            <span>projeto-01</span>
+          </div>
+          <div class="sound-hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            Toque para som
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- SEÇÃO 2 — vídeo centralizado -->
+    <section class="project-section" data-index="2">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">02</span><div class="section-line-bar"></div></div>
+      <div class="video-only-center">
+        <div class="project-video-wrap">
+          <video loop muted playsinline preload="none" src="videos/elite-02.mp4"></video>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>elite-02.mp4</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 3 — vídeo centralizado -->
+    <section class="project-section" data-index="3">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">03</span><div class="section-line-bar"></div></div>
+      <div class="video-only-center">
+        <div class="project-video-wrap">
+          <video loop muted playsinline preload="none" src="videos/elite-03.mp4"></video>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>elite-03.mp4</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 4 — vídeo centralizado -->
+    <section class="project-section" data-index="4">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">04</span><div class="section-line-bar"></div></div>
+      <div class="video-only-center">
+        <div class="project-video-wrap">
+          <video loop muted playsinline preload="none" src="videos/elite-04.mp4"></video>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>elite-04.mp4</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 5 — vídeo centralizado -->
+    <section class="project-section" data-index="5">
+      <div class="section-line"><div class="section-line-bar"></div><span class="section-line-num">05</span><div class="section-line-bar"></div></div>
+      <div class="video-only-center">
+        <div class="project-video-wrap">
+          <video loop muted playsinline preload="none" src="videos/elite-05.mp4"></video>
+          <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>elite-05.mp4</span></div>
+          <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 6 — CTA -->
+    <section class="project-section cta-section" data-index="6">
+      <div class="cta-inner">
+        <div class="cta-label">Vamos criar juntos</div>
+        <h2 class="cta-headline">Sua marca merece<br><span class="cta-accent">ser lembrada.</span></h2>
+        <p class="cta-sub">Conteúdo que para o scroll, gera conexão e converte.</p>
+        <div class="cta-buttons">
+          <a class="cta-btn cta-btn--primary" href="https://wa.me/5511999400602?text=Ol%C3%A1%20Leo%2C%20vi%20seu%20portf%C3%B3lio%20e%20quero%20conversar!" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.553 4.103 1.519 5.829L.057 23.5l5.826-1.527A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.006-1.371l-.36-.213-3.714.974.99-3.617-.234-.372A9.818 9.818 0 0 1 2.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/></svg>
+            Falar no WhatsApp
+          </a>
+          <a class="cta-btn cta-btn--secondary" href="javascript:void(0)" onclick="scrollToSection(0)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            Voltar ao início
+          </a>
+        </div>
+        <div class="cta-signature">LEO DMAIO</div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- TICKER — padrão original -->
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="ticker-track"></div>
+  </div>
+
+  <script>
+  /* CANVAS — partículas subindo suavemente */
+  (function() {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+    const N = 22;
+
+    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+
+    function rp(forceBottom) {
+      const isOrange = Math.random() < 0.18;
+      return {
+        x: Math.random() * W,
+        y: forceBottom ? H + Math.random() * H * 0.3 : Math.random() * H,
+        r: Math.random() * 1.2 + 0.3,
+        vy: -(Math.random() * 0.28 + 0.06),  // sobe
+        vx: (Math.random() - 0.5) * 0.06,
+        alpha: Math.random() * 0.09 + 0.015,
+        alphaTarget: Math.random() * 0.09 + 0.015,
+        alphaTick: 0,
+        alphaSpeed: Math.random() * 0.003 + 0.001,
+        color: isOrange ? [255, 92, 0] : [255, 255, 255],
+      };
+    }
+
+    function init() {
+      resize();
+      particles = Array.from({ length: N }, () => rp(false));
+      window.addEventListener('resize', resize);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      particles.forEach((p, i) => {
+        // gentle alpha breathing
+        p.alphaTick += p.alphaSpeed;
+        p.alpha = p.alphaTarget * (0.65 + 0.35 * Math.sin(p.alphaTick));
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${p.color[0]},${p.color[1]},${p.color[2]},${p.alpha})`;
+        ctx.fill();
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // wrap horizontal suavemente
+        if (p.x < -10) p.x = W + 10;
+        if (p.x > W + 10) p.x = -10;
+
+        // quando sai pelo topo, renasce na base
+        if (p.y < -20) {
+          particles[i] = rp(true);
+        }
+      });
+      requestAnimationFrame(draw);
+    }
+
+    init(); draw();
+  })();
+
+  /* TICKER */
+  (function() {
+    const items = ['Elite Magazine','Jornalismo','Conteúdo','Reels','TikTok','Video Editor','Redação','Tendências'];
+    const track = document.getElementById('ticker-track');
+    let html = '';
+    for(let d=0;d<4;d++) items.forEach(item => { html+=`<span class="ticker-item">${item}</span><span class="ticker-dot">◆</span>`; });
+    track.innerHTML = html;
+  })();
+
+  /* DOTS */
+  const TOTAL_SECTIONS = 7;
+  const dotsContainer = document.getElementById('side-dots');
+  function buildDots() {
+    for(let i=0;i<TOTAL_SECTIONS;i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot'+(i===0?' active':'');
+      dot.dataset.index = i;
+      dot.addEventListener('click',()=>scrollToSection(i));
+      dotsContainer.appendChild(dot);
+    }
+  }
+  function updateDots(index) { document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===index)); }
+
+  /* SCROLL */
+  const scrollContainer = document.getElementById('scroll-container');
+  const sections = document.querySelectorAll('.project-section');
+  function scrollToSection(index) { const t=sections[index]; if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const section = entry.target;
+      const idx = parseInt(section.dataset.index, 10);
+      if(entry.isIntersecting) {
+        section.classList.add('is-active'); updateDots(idx);
+        const video = section.querySelector('video');
+        if(video) { video.play().catch(()=>{}); const ph=section.querySelector('.video-placeholder'); if(ph) ph.style.display='none'; }
+        preloadNext(idx);
+      } else {
+        section.classList.remove('is-active');
+        const video = section.querySelector('video');
+        if(video) { video.pause(); video.muted=true; const hint=section.querySelector('.sound-hint'); if(hint) hint.classList.remove('hidden'); }
+      }
+    });
+  }, { root: scrollContainer, threshold: 0.5 });
+  sections.forEach(s=>observer.observe(s));
+
+  function preloadNext(idx) {
+    const next = document.querySelector(`.project-section[data-index="${idx+1}"]`);
+    if(next) { const v=next.querySelector('video'); if(v&&v.preload!=='auto'){v.preload='auto';v.load();} }
+  }
+
+  /* SOM */
+  let activeAudioVideo = null;
+  document.querySelectorAll('.project-video-wrap').forEach(wrap => {
+    const video = wrap.querySelector('video');
+    const hint = wrap.querySelector('.sound-hint');
+    if(!video) return;
+    wrap.addEventListener('click',()=>{
+      if(activeAudioVideo&&activeAudioVideo!==video){ activeAudioVideo.muted=true; const pw=activeAudioVideo.closest('.project-video-wrap'); if(pw){const ph=pw.querySelector('.sound-hint');if(ph)ph.classList.remove('hidden');} }
+      video.muted=!video.muted;
+      if(!video.muted){ activeAudioVideo=video; if(hint) hint.classList.add('hidden'); }
+      else { activeAudioVideo=null; if(hint) hint.classList.remove('hidden'); }
+    });
+  });
+
+  buildDots();
+  sections[0].classList.add('is-active');
+  </script>
+
+</body>
+</html>
