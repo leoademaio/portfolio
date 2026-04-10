@@ -484,35 +484,85 @@
        RESPONSIVIDADE MOBILE
     ============================================================ */
     @media (max-width: 768px) {
-      .project-inner {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto;
-        gap: 1.5rem;
-        padding: 5rem 1.2rem 4rem;
-        align-items: start;
-        overflow-y: auto;
+      /* Cada seção ocupa exatamente a tela */
+      .project-section {
+        height: 100vh;
+        min-height: unset;
+        overflow: hidden;
       }
 
-      .project-text { max-width: 100%; order: 2; }
+      /* Layout coluna: vídeo em cima, texto embaixo */
+      .project-inner {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        gap: 0.6rem;
+        padding: 56px 1rem 42px; /* nav (52px) + ticker (36px) */
+        align-items: center;
+        height: 100%;
+      }
 
+      /* Vídeo menor para caber texto abaixo */
       .project-video-wrap {
-        width: 100%;
-        max-width: 260px;
-        margin: 0 auto;
         order: 1;
+        width: auto;
+        /* Altura máxima para o vídeo = ~50% da tela */
+        max-height: calc(100vh - 52px - 42px - 120px);
+        aspect-ratio: 9 / 16;
+        margin: 0 auto;
+      }
+
+      /* Texto compacto abaixo do vídeo */
+      .project-text {
+        order: 2;
+        max-width: 100%;
+        gap: 0.3rem;
+        padding-bottom: 0.3rem;
+      }
+
+      .project-number { font-size: 2rem; line-height: 1; }
+
+      .project-category { font-size: 0.65rem; }
+
+      .project-title {
+        font-size: clamp(1.6rem, 6vw, 2.4rem);
+        line-height: 0.95;
+      }
+
+      .project-desc {
+        font-size: 0.82rem;
+        line-height: 1.5;
+        /* Limita a 3 linhas para não transbordar */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
 
       .section-line { display: none; }
-
-      .project-number { font-size: 3rem; }
-
       nav { padding: 0 1rem; }
-      .side-dots { right: 0.7rem; }
+      .side-dots { right: 0.5rem; }
+    }
 
-      .project-section {
-        height: auto;
-        min-height: 100vh;
-      }
+    /* Botão de play manual (fallback iOS) */
+    .mobile-play-btn {
+      display: none;
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      z-index: 8;
+      background: rgba(0,0,0,0.45);
+      cursor: pointer;
+    }
+
+    .mobile-play-btn svg {
+      width: 52px;
+      height: 52px;
+      filter: drop-shadow(0 0 12px rgba(255,92,0,0.6));
+    }
+
+    .mobile-play-btn.visible {
+      display: flex;
     }
     /* ============================================================
        PÁGINA FINAL — CTA
@@ -713,6 +763,9 @@
             title="Projeto 01"
           ></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder">
             <div class="ph-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -740,6 +793,9 @@
         <div class="project-video-wrap" data-vimeo-id="1181287343">
           <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 02"></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-02</span></div>
           <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
         </div>
@@ -759,6 +815,9 @@
         <div class="project-video-wrap" data-vimeo-id="1181425661">
           <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 03"></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-03</span></div>
           <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
         </div>
@@ -778,6 +837,9 @@
         <div class="project-video-wrap" data-vimeo-id="1181287531">
           <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 04"></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-04</span></div>
           <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
         </div>
@@ -796,6 +858,9 @@
         <div class="project-video-wrap" data-vimeo-id="1181425780">
           <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 05"></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-05</span></div>
           <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
         </div>
@@ -814,6 +879,9 @@
         <div class="project-video-wrap" data-vimeo-id="1181287656">
           <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 06"></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-06</span></div>
           <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
         </div>
@@ -832,6 +900,9 @@
         <div class="project-video-wrap" data-vimeo-id="1181425817">
           <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 07"></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-07</span></div>
           <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
         </div>
@@ -850,6 +921,9 @@
         <div class="project-video-wrap" data-vimeo-id="1181287792">
           <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 08"></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-08</span></div>
           <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
         </div>
@@ -868,6 +942,9 @@
         <div class="project-video-wrap" data-vimeo-id="1181287837">
           <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 09"></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-09</span></div>
           <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
         </div>
@@ -886,6 +963,9 @@
         <div class="project-video-wrap" data-vimeo-id="1181287898">
           <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 10"></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-10</span></div>
           <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
         </div>
@@ -899,6 +979,9 @@
         <div class="project-video-wrap project-video-horizontal" data-vimeo-id="1181288090">
           <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 11"></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-11</span></div>
           <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
         </div>
@@ -918,6 +1001,9 @@
         <div class="project-video-wrap" data-vimeo-id="1181426818">
           <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 12"></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-12</span></div>
           <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
         </div>
@@ -937,6 +1023,9 @@
         <div class="project-video-wrap" data-vimeo-id="1181426840">
           <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 13"></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-13</span></div>
           <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
         </div>
@@ -955,6 +1044,9 @@
         <div class="project-video-wrap" data-vimeo-id="1181426861">
           <iframe src="about:blank" allow="autoplay; encrypted-media" allowfullscreen title="Projeto 14"></iframe>
           <div class="video-click-overlay"></div>
+          <div class="mobile-play-btn" aria-label="Reproduzir vídeo">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#FF5C00" stroke-width="1.5" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 17 12 10 16 10 8" fill="#FF5C00"/></svg>
+          </div>
           <div class="video-placeholder"><div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span>projeto-14</span></div>
           <div class="sound-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Toque para som</div>
         </div>
@@ -1086,9 +1178,24 @@
   const wrapState = new Map();
   let activeAudioWrap = null;
 
+  // Detecta iOS/Safari mobile
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isMobile = window.innerWidth <= 768;
+
   function buildVimeoSrc(videoId) {
-    // autoplay=1 muted=1 loop=1 background=0 para manter controle via postMessage
-    return `https://player.vimeo.com/video/${videoId}?autoplay=1&loop=1&muted=1&controls=0&background=0&playsinline=1&transparent=0`;
+    // background=1 no iOS força autoplay muted sem precisar de interação
+    const bg = (isIOS || isMobile) ? 1 : 0;
+    return `https://player.vimeo.com/video/${videoId}?autoplay=1&loop=1&muted=1&controls=0&background=${bg}&playsinline=1&transparent=0`;
+  }
+
+  function showPlayBtn(wrap) {
+    const btn = wrap.querySelector('.mobile-play-btn');
+    if (btn) btn.classList.add('visible');
+  }
+
+  function hidePlayBtn(wrap) {
+    const btn = wrap.querySelector('.mobile-play-btn');
+    if (btn) btn.classList.remove('visible');
   }
 
   function sendVimeoCommand(iframe, method, value) {
@@ -1106,17 +1213,39 @@
     if (iframe.src && iframe.src !== 'about:blank' && iframe.src !== window.location.href) return true;
     iframe.src = buildVimeoSrc(videoId);
     wrapState.set(wrap, { iframe, muted: true });
+
+    // Registra listener do evento play no Vimeo após carregar
+    iframe.addEventListener('load', () => {
+      sendVimeoCommand(iframe, 'addEventListener', 'play');
+    });
+
+    // Fallback: se após 2.5s o vídeo ainda não tocou (iOS bloqueou autoplay),
+    // mostra botão de play manual
+    if (isMobile) {
+      setTimeout(() => {
+        const s = wrapState.get(wrap);
+        if (s && !s.playing) showPlayBtn(wrap);
+      }, 2500);
+    }
+
     return true;
   }
 
   function playWrap(wrap) {
     const s = wrapState.get(wrap);
-    if (s) sendVimeoCommand(s.iframe, 'play');
+    if (s) {
+      sendVimeoCommand(s.iframe, 'play');
+      s.playing = true;
+      hidePlayBtn(wrap);
+    }
   }
 
   function pauseWrap(wrap) {
     const s = wrapState.get(wrap);
-    if (s) sendVimeoCommand(s.iframe, 'pause');
+    if (s) {
+      sendVimeoCommand(s.iframe, 'pause');
+      s.playing = false;
+    }
   }
 
   function muteWrap(wrap) {
@@ -1220,6 +1349,28 @@
   ============================================================ */
   document.querySelectorAll('.project-video-wrap').forEach(wrap => {
     const overlay = wrap.querySelector('.video-click-overlay');
+    const playBtn = wrap.querySelector('.mobile-play-btn');
+
+    // Botão de play manual (fallback iOS)
+    if (playBtn) {
+      playBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        hidePlayBtn(wrap);
+        // Recria o iframe com background=0 para poder controlar via postMessage
+        const videoId = wrap.dataset.vimeoId;
+        const iframe = wrap.querySelector('iframe');
+        if (iframe && videoId) {
+          iframe.src = `https://player.vimeo.com/video/${videoId}?autoplay=1&loop=1&muted=1&controls=0&background=0&playsinline=1&transparent=0`;
+          wrapState.set(wrap, { iframe, muted: true, playing: true });
+          setTimeout(() => {
+            sendVimeoCommand(iframe, 'play');
+            const ph = wrap.querySelector('.video-placeholder');
+            if (ph) ph.style.display = 'none';
+          }, 800);
+        }
+      });
+    }
+
     if (!overlay) return;
 
     overlay.addEventListener('click', () => {
@@ -1241,6 +1392,25 @@
         activeAudioWrap = null;
       }
     });
+  });
+
+  /* ============================================================
+     ESCUTA MENSAGENS DO VIMEO PLAYER (detecta quando tocou)
+  ============================================================ */
+  window.addEventListener('message', function(event) {
+    if (!event.data) return;
+    let data;
+    try { data = JSON.parse(event.data); } catch(e) { return; }
+    if (data.event === 'play') {
+      // Encontra o wrap que tem esse iframe
+      document.querySelectorAll('.project-video-wrap').forEach(wrap => {
+        const s = wrapState.get(wrap);
+        if (s && s.iframe && s.iframe.contentWindow === event.source) {
+          s.playing = true;
+          hidePlayBtn(wrap);
+        }
+      });
+    }
   });
 
   /* ============================================================
